@@ -1,0 +1,76 @@
+/* 重置默认样式 */
+/* 1. 开启所有元素的解析盒模型为 border-box */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* 2. 移除默认外边距和内边距 */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* 3. 设置基础字体和滚动行为 */
+html {
+  -webkit-text-size-adjust: 100%; /* 防止 iOS 横屏时字体变大 */
+  tab-size: 4;
+  scroll-behavior: smooth;
+}
+
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased; /* 抗锯齿，让文字更清晰 */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+/* 4. 移除列表默认样式 (常用于菜单) */
+ol,
+ul,
+menu {
+  list-style: none;
+}
+
+/* 5. 让图片和视频更易于管理 */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* 6. 移除按钮和输入的默认边框/样式 */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  outline: none;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+/* 7. 移除链接的下划线和默认颜色 */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 8. 文本域防止随意拉伸破坏布局 */
+textarea {
+  resize: vertical;
+}
+
+/* 9. 隐藏 HTML5 默认属性 */
+[hidden] {
+  display: none !important;
+}
