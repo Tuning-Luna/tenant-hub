@@ -1,3 +1,4 @@
+// routes.ts
 import React from "react"
 import {
   DashboardOutlined,
@@ -5,8 +6,7 @@ import {
   SettingOutlined,
   BarChartOutlined,
 } from "@ant-design/icons"
-import { createBrowserRouter, Navigate } from "react-router-dom"
-import MainLayout from "../layouts/MainLayout"
+import type { RouteObject } from "react-router-dom"
 import TestPage from "../pages/test/TestPage"
 
 export interface RouteConfig {
@@ -19,78 +19,77 @@ export interface RouteConfig {
   hidden?: boolean
 }
 
-import type { RouteObject } from "react-router-dom"
-
-// 递归转换函数
-export function transformRoutes(config: RouteConfig[]): RouteObject[] {
-  return config.map((item) => ({
-    path: item.path,
-    element: item.element,
-    children: item.children ? transformRoutes(item.children) : undefined,
-  }))
-}
-
+// routes.ts
 export const routes: RouteConfig[] = [
+  // 直接定义具体的业务子路由，不要再套一层 "/" 和 MainLayout
   {
-    path: "/",
-    title: "首页",
-    element: <MainLayout />, // 根节点使用布局组件
+    path: "dashboard",
+    title: "控制台",
+    icon: <DashboardOutlined />,
+    element: <div>Dashboard Content</div>,
+    permission: "tenant:data:view",
+  },
+  {
+    path: "analysis",
+    title: "数据分析",
+    icon: <BarChartOutlined />,
+    element: <div>Analysis Content</div>,
+    permission: "tenant:data:view",
+  },
+  {
+    path: "users",
+    title: "成员管理",
+    icon: <UserOutlined />,
+    permission: "tenant:user:view",
     children: [
       {
-        path: "", // 访问 / 时重定向到 dashboard
-        title: "重定向",
-        hidden: true,
-        element: (
-          <Navigate
-            to="/dashboard"
-            replace
-          />
-        ),
-      },
-      {
-        path: "dashboard",
-        title: "控制台",
-        icon: <DashboardOutlined />,
-        element: <div>Dashboard Content</div>,
-        permission: "dashboard:view",
-      },
-      {
-        path: "analysis",
-        title: "数据分析",
-        icon: <BarChartOutlined />,
-        element: <div>Analysis Content</div>,
-        permission: "analysis:view",
-      },
-      {
-        path: "users",
-        title: "成员管理",
-        icon: <UserOutlined />,
-        permission: "user:view",
-        children: [
-          {
-            path: "list", // 注意：子路由 path 建议写相对路径，即 "list" 而不是 "/users/list"
-            title: "用户列表",
-            element: <div>User List</div>,
-            permission: "user:list",
-          },
-        ],
-      },
-      {
-        path: "settings",
-        title: "系统设置",
-        icon: <SettingOutlined />,
-        element: <div>Settings</div>,
-        permission: "sys:admin",
-      },
-      {
-        path: "test",
-        title: "测试页面",
-        icon: <SettingOutlined />,
-        element: <TestPage />,
-        permission: "sys:admin",
+        path: "list",
+        title: "用户列表",
+        element: <div>User List</div>,
+        permission: "tenant:user:view",
       },
     ],
   },
+  {
+    path: "settings",
+    title: "系统设置",
+    icon: <SettingOutlined />,
+    element: <div>Settings</div>,
+    permission: "system:config:view",
+  },
+  {
+    path: "test",
+    title: "测试页面",
+    icon: <SettingOutlined />,
+    element: <TestPage />,
+    permission: "system:tenant:add",
+  },
 ]
 
-export const router = createBrowserRouter(transformRoutes(routes))
+// 递归转换路由配置为 React Router 格式
+// routes.ts
+import PermissionGuard from "../components/PermissionGuard" // 引入你的守卫组件
+
+export function transformRoutes(config: RouteConfig[]): RouteObject[] {
+  return config.map((item) => {
+    // 基础路由对象
+    const route: RouteObject = {
+      path: item.path,
+      // 如果有子路由，递归转换
+      children: item.children ? transformRoutes(item.children) : undefined,
+    }
+
+    // 核心逻辑：如果有 element 且有 permission，进行包裹
+    if (item.element) {
+      route.element = item.permission ? (
+        <PermissionGuard permission={item.permission}>
+          {item.element}
+        </PermissionGuard>
+      ) : (
+        item.element
+      )
+    }
+
+    return route
+  })
+}

@@ -2,8 +2,10 @@ import { Button, Card, Space, Typography, Descriptions, theme } from "antd"
 import { loginAPI } from "../../api/login"
 const { Title } = Typography
 import { useAuthStore } from "../../stores/useAuthStore"
+import { useNavigate } from "react-router-dom"
 
-export default function TestPage() {
+export default function LoginPage() {
+  const navigate = useNavigate()
   const { setUser } = useAuthStore.getState()
   const user = useAuthStore((state) => state.user)
   const { resetUser } = useAuthStore.getState()
@@ -19,6 +21,7 @@ export default function TestPage() {
         password: "123456",
       })
       setUser(response)
+      navigate("/")
     } catch (error) {
       console.error(error)
     }

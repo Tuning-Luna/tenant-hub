@@ -3,6 +3,7 @@ import { Layout, Menu, theme } from "antd"
 import { AppstoreOutlined } from "@ant-design/icons"
 import { Outlet, useNavigate, useLocation } from "react-router-dom"
 import { routes, type RouteConfig } from "../config/routes"
+import { useAuthStore } from "../stores/useAuthStore"
 
 const { Header, Content, Sider } = Layout
 
@@ -10,38 +11,39 @@ const MainLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
+  const userPermissions = useAuthStore((s) => s.user?.permissions || [])
 
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken()
 
-  // 递归生成菜单项
-  const getMenuItems = (configs: RouteConfig[], parentPath = "") => {
+  // 递归生成菜单项，根据用户权限过滤
+  const getMenuItems = (configs: RouteConfig[], parentPath = ""): any[] => {
     const items: any[] = []
 
     configs.forEach((route) => {
       if (route.hidden) return
+      // ✅ 权限过滤
+      if (route.permission && !userPermissions.includes(route.permission)) {
+        return
+      }
 
-      // 关键：拼接完整路径。如果是绝对路径则不拼，如果是相对路径则拼接父路径
       const fullPath = route.path.startsWith("/")
         ? route.path
         : `${parentPath}/${route.path}`.replace(/\/+/g, "/")
 
-      // 如果有子节点，递归处理
       const children = route.children
         ? getMenuItems(route.children, fullPath)
         : undefined
 
-      // 如果该路由有 element 或者是目录（有 children），则添加到菜单
-      if (route.title && (route.element || children)) {
+      if (route.title && (route.element || children?.length)) {
         items.push({
           key: fullPath,
           icon: route.icon,
           label: route.title,
           children: children?.length ? children : undefined,
         })
-      } else if (children) {
-        // 如果当前节点只是个空壳（比如为了组织层级），直接把子项铺平
+      } else if (children?.length) {
         items.push(...children)
       }
     })
@@ -54,19 +56,25 @@ const MainLayout: React.FC = () => {
     // 找到包含页面定义的根配置（即 path 为 "/" 的那一项的 children）
     const rootRoute = routes.find((r) => r.path === "/")
     return getMenuItems(rootRoute?.children || routes)
-  }, [])
+  }, [userPermissions])
+
+  const handleLogout = () => {
+    useAuthStore.getState().resetUser()
+    navigate("/login")
+  }
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
         collapsible
+        theme="light"
         collapsed={collapsed}
         onCollapse={setCollapsed}>
         <div
           style={{
             height: 32,
             margin: 16,
-            background: "rgba(255,255,255,0.2)",
+            background: "#f0f2f5",
             borderRadius: 6,
           }}>
           {collapsed ? (
@@ -79,12 +87,11 @@ const MainLayout: React.FC = () => {
                 alignItems: "center", // 垂直居中
                 justifyContent: "center", // 水平居中
               }}>
-              <AppstoreOutlined style={{ color: "#fff", fontSize: 24 }} />
+              <AppstoreOutlined style={{ color: "#000", fontSize: 24 }} />
             </div>
           ) : (
             <h1
               style={{
-                color: "white",
                 fontFamily: "Arial, Helvetica, sans-serif",
                 fontSize: 20,
                 textAlign: "center",
@@ -96,7 +103,6 @@ const MainLayout: React.FC = () => {
           )}
         </div>
         <Menu
-          theme="dark"
           // 选中的菜单项 key，确保能匹配当前地址栏
           selectedKeys={[location.pathname]}
           // 默认展开父级菜单
@@ -108,7 +114,7 @@ const MainLayout: React.FC = () => {
       </Sider>
       <Layout>
         <Header style={{ padding: 0, background: colorBgContainer }}>
-          Header
+          <div onClick={handleLogout}>退出登录</div>
         </Header>
 
         <Content style={{ margin: "16px" }}>
