@@ -5,10 +5,8 @@ import App from "./App"
 import "./css/reset.css"
 
 async function enableMocking() {
-  if (import.meta.env.DEV) {
-    const { worker } = await import("./mocks/browser")
-    await worker.start()
-  }
+  const { worker } = await import("./mocks/browser")
+  await worker.start()
 }
 
 enableMocking().then(() => {
