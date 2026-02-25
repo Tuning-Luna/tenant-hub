@@ -6,6 +6,13 @@ import { Navigate, useNavigate } from "react-router-dom"
 
 export default function LoginPage() {
   const isLogin = useAuthStore((s) => s.isLogin)
+  const user = useAuthStore((state) => state.user)
+  const navigate = useNavigate()
+  const { setUser, resetUser } = useAuthStore()
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken()
+
   if (isLogin) {
     return (
       <Navigate
@@ -14,15 +21,6 @@ export default function LoginPage() {
       />
     )
   }
-
-  const navigate = useNavigate()
-  const { setUser } = useAuthStore.getState()
-  const user = useAuthStore((state) => state.user)
-  const { resetUser } = useAuthStore.getState()
-
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken()
 
   async function handleLogin(role: string) {
     try {
@@ -36,7 +34,6 @@ export default function LoginPage() {
       console.error(error)
     }
   }
-
   return (
     <div
       style={{

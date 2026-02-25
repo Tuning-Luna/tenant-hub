@@ -12,22 +12,21 @@ export default function ResultPage({ status, title, subTitle }: Props) {
   const navigate = useNavigate()
   const [seconds, setSeconds] = useState(5)
 
+  // 倒计时递减
   useEffect(() => {
-    // 倒计时逻辑
     const timer = setInterval(() => {
-      setSeconds((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer)
-          navigate("/", { replace: true }) // 5秒后跳转
-          return 0
-        }
-        return prev - 1
-      })
+      setSeconds((prev) => prev - 1)
     }, 1000)
 
-    // 组件卸载时清除定时器，防止内存泄漏
     return () => clearInterval(timer)
-  }, [navigate])
+  }, [])
+
+  // 单独监听 seconds
+  useEffect(() => {
+    if (seconds <= 0) {
+      navigate("/", { replace: true })
+    }
+  }, [seconds, navigate])
 
   return (
     <div style={{ marginTop: "100px" }}>
