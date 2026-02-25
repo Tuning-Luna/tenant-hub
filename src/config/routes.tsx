@@ -19,7 +19,6 @@ export interface RouteConfig {
   hidden?: boolean
 }
 
-// routes.ts
 export const routes: RouteConfig[] = [
   // 直接定义具体的业务子路由，不要再套一层 "/" 和 MainLayout
   {
@@ -67,8 +66,7 @@ export const routes: RouteConfig[] = [
 ]
 
 // 递归转换路由配置为 React Router 格式
-// routes.ts
-import PermissionGuard from "../components/PermissionGuard" // 引入你的守卫组件
+import PermissionGuard from "../components/PermissionGuard"
 
 export function transformRoutes(config: RouteConfig[]): RouteObject[] {
   return config.map((item) => {
