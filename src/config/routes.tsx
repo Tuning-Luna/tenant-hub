@@ -7,7 +7,13 @@ import {
   BarChartOutlined,
 } from "@ant-design/icons"
 import type { RouteObject } from "react-router-dom"
+import PermissionGuard from "../components/PermissionGuard"
+
 import TestPage from "../pages/test/TestPage"
+import Dashboard from "../pages/dashboard/Dashboard"
+import Analysis from "../pages/analysis/Analysis"
+import UserList from "../pages/userlist/UserList"
+import Setting from "../pages/setting/Setting"
 
 export interface RouteConfig {
   path: string
@@ -25,14 +31,14 @@ export const routes: RouteConfig[] = [
     path: "dashboard",
     title: "控制台",
     icon: <DashboardOutlined />,
-    element: <div>Dashboard Content</div>,
+    element: <Dashboard />,
     permission: "tenant:data:view",
   },
   {
     path: "analysis",
     title: "数据分析",
     icon: <BarChartOutlined />,
-    element: <div>Analysis Content</div>,
+    element: <Analysis />,
     permission: "tenant:data:view",
   },
   {
@@ -44,7 +50,7 @@ export const routes: RouteConfig[] = [
       {
         path: "list",
         title: "用户列表",
-        element: <div>User List</div>,
+        element: <UserList />,
         permission: "tenant:user:view",
       },
     ],
@@ -53,7 +59,7 @@ export const routes: RouteConfig[] = [
     path: "settings",
     title: "系统设置",
     icon: <SettingOutlined />,
-    element: <div>Settings</div>,
+    element: <Setting />,
     permission: "system:config:view",
   },
   {
@@ -65,9 +71,7 @@ export const routes: RouteConfig[] = [
   },
 ]
 
-// 递归转换路由配置为 React Router 格式
-import PermissionGuard from "../components/PermissionGuard"
-
+// 递归转换路由配置为 React Router 格式并使用 PermissionGuard 包裹
 export function transformRoutes(config: RouteConfig[]): RouteObject[] {
   return config.map((item) => {
     // 基础路由对象
@@ -87,7 +91,6 @@ export function transformRoutes(config: RouteConfig[]): RouteObject[] {
         item.element
       )
     }
-
     return route
   })
 }

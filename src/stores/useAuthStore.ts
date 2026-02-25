@@ -8,11 +8,13 @@ interface AuthState {
 
   setUser: (user: UserT) => void
   resetUser: () => void
+
+  hasPermission: (permission: string) => boolean
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       isLogin: false,
 
@@ -27,6 +29,10 @@ export const useAuthStore = create<AuthState>()(
           user: null,
           isLogin: false,
         }),
+
+      hasPermission: (permission: string) => {
+        return get().user?.permissions.includes(permission) || false
+      },
     }),
     {
       name: "tenant-auth-storage",

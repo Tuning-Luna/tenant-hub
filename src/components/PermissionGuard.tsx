@@ -10,11 +10,11 @@ export default function PermissionGuard({
   permission: string
   children: React.ReactNode
 }) {
-  const user = useAuthStore((s) => s.user)
+  const hasPermission = useAuthStore((s) => s.hasPermission(permission))
 
   if (!permission) return children
 
-  if (!user?.permissions.includes(permission)) {
+  if (!hasPermission) {
     return <Navigate to="/403" />
   }
   return children
