@@ -2,9 +2,19 @@ import { Button, Card, Space, Typography, Descriptions, theme } from "antd"
 import { loginAPI } from "../../api/login"
 const { Title } = Typography
 import { useAuthStore } from "../../stores/useAuthStore"
-import { useNavigate } from "react-router-dom"
+import { Navigate, useNavigate } from "react-router-dom"
 
 export default function LoginPage() {
+  const isLogin = useAuthStore((s) => s.isLogin)
+  if (isLogin) {
+    return (
+      <Navigate
+        to="/"
+        replace
+      />
+    )
+  }
+
   const navigate = useNavigate()
   const { setUser } = useAuthStore.getState()
   const user = useAuthStore((state) => state.user)
@@ -14,7 +24,7 @@ export default function LoginPage() {
     token: { colorBgContainer },
   } = theme.useToken()
 
-  const handleLogin = async (role: string) => {
+  async function handleLogin(role: string) {
     try {
       const response = await loginAPI({
         username: role,
