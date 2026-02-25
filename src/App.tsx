@@ -1,7 +1,7 @@
 import { RouterProvider, createBrowserRouter, Navigate } from "react-router-dom"
 import { routes, transformRoutes } from "./config/routes"
 import LoginPage from "./pages/login/LoginPage"
-import MainLayout from "./layouts/MainLayout"
+import MainLayout from "./layouts/mainlayout/MainLayout"
 import RequireAuth from "./components/RequireAuth"
 import ResultPage from "./pages/result/ResultPage"
 
