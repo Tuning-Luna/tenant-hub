@@ -2,7 +2,8 @@ import { useMemo, useState } from "react"
 import { Layout, Menu } from "antd"
 import { AppstoreOutlined } from "@ant-design/icons"
 import { useNavigate, useLocation } from "react-router-dom"
-import { routes, type RouteConfig } from "../../config/routes"
+import { routes } from "../../router/routes"
+import type { RouteConfig } from "../../types/route"
 import { useAuthStore } from "../../stores/useAuthStore"
 import { theme } from "antd"
 const { Sider } = Layout
@@ -30,7 +31,7 @@ function AppSider() {
 
     configs.forEach((route) => {
       if (route.hidden) return
-      // ✅ 权限过滤
+      // 权限过滤
       if (route.permission && !userPermissions.includes(route.permission)) {
         return
       }
@@ -57,6 +58,7 @@ function AppSider() {
 
     return items
   }
+
   return (
     <Sider
       collapsible

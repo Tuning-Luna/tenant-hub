@@ -1,7 +1,7 @@
 import { useAuthStore } from "../stores/useAuthStore"
 import { Navigate } from "react-router-dom"
 
-// 权限守卫
+// 路由权限守卫
 // 检查用户是否有指定权限
 export default function PermissionGuard({
   permission,

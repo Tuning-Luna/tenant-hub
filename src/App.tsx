@@ -1,9 +1,10 @@
 import { RouterProvider, createBrowserRouter, Navigate } from "react-router-dom"
-import { routes, transformRoutes } from "./config/routes"
+import { routes } from "./router/routes"
 import LoginPage from "./pages/login/LoginPage"
 import MainLayout from "./layouts/mainlayout/MainLayout"
 import RequireAuth from "./components/RequireAuth"
 import ResultPage from "./pages/result/ResultPage"
+import { buildProtectedRoutes } from "./router/buildProtectedRoutes"
 
 // 将 router 定义在组件外部，它只会在应用加载时初始化一次
 const router = createBrowserRouter([
@@ -28,7 +29,7 @@ const router = createBrowserRouter([
           />
         ),
       },
-      ...transformRoutes(routes),
+      ...buildProtectedRoutes(routes),
     ],
   },
   {
