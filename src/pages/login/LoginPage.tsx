@@ -75,7 +75,7 @@ export default function LoginPage() {
         </Title>
 
         <Space
-          direction="vertical"
+          orientation="vertical"
           size="large"
           style={{ width: "100%" }}>
           <Button
